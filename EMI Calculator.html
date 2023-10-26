@@ -17,8 +17,8 @@
             min-height: 100vh;
         }
         .container {
-            width: 92%; /* Adjust maximum width to create equal spacing */
-            max-width: 400px;
+            width: 102%; /* Increase maximum width by 10% */
+            max-width: 440px; /* Increase the maximum width */
             margin: 0 1%; /* 1% margin on the right side */
             padding: 20px;
             background-color: #fff;
@@ -48,8 +48,17 @@
             display: block;
             margin-bottom: 10px;
         }
-        input[type="number"] {
-            width: 100%;
+        .input-container {
+            display: flex;
+            align-items: center;
+        }
+        .input-container label {
+            width: 30%; /* Adjust the width for labels */
+            text-align: right;
+            padding-right: 10px;
+        }
+        .input-container input[type="number"] {
+            width: 70%; /* Adjust the width for input fields */
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 3px;
@@ -74,6 +83,11 @@
         }
         #emiResult {
             font-weight: bold;
+            display: inline; /* Display EMI result inline */
+        }
+        #totalRepayment {
+            font-weight: bold;
+            display: inline; /* Display Total Repayment inline */
         }
         .emi-table-container {
             margin: 20px 0;
@@ -85,22 +99,30 @@
         <h2>Loan EMI Calculator</h2>
 
         <form id="loanForm">
-            <label for="loanAmount">Loan Amount:</label>
-            <input type="number" id="loanAmount" placeholder="Loan Amount" required>
+            <div class="input-container">
+                <label for="loanAmount">Loan Amount:</label>
+                <input type="number" id="loanAmount" placeholder="Loan Amount" required>
+            </div>
 
-            <label for="loanTenure">Loan Tenure (Months):</label>
-            <input type="number" id="loanTenure" placeholder="Months" required>
+            <div class="input-container">
+                <label for="loanTenure">Loan Tenure:</label>
+                <input type="number" id="loanTenure" placeholder="Months" required>
+            </div>
 
-            <label for="interestRate">Interest Rate (%):</label>
-            <input type="number" id="interestRate" step="0.01" placeholder="%" required>
+            <div class="input-container">
+                <label for="interestRate">Interest Rate:</label>
+                <input type="number" id="interestRate" step="0.01" placeholder="%" required>
+            </div>
 
             <div class="button-container">
                 <button type="button" id="calculateBtn" onclick="calculateEMI()">Calculate</button>
             </div>
         </form>
 
-        <h3>EMI Per Month</h3>
-        <p id="emiResult">--</p>
+        <div class="emi-result-container">
+            <p><span id="emiLabel">EMI Per Month:</span> <span id="emiResult">--</span></p>
+            <p><span id="repaymentLabel">Total Repayment:</span> <span id="totalRepayment">--</span></p>
+        </div>
 
         <div class="emi-table-container">
             <h3>Breakup of EMI</h3>
@@ -127,6 +149,14 @@
             const loanTenure = parseInt(document.getElementById("loanTenure").value);
             const annualInterestRate = parseFloat(document.getElementById("interestRate").value);
 
+            // Check if any value is missing or zero
+            if (isNaN(loanAmount) || isNaN(loanTenure) || isNaN(annualInterestRate) || loanAmount <= 0 || loanTenure <= 0 || annualInterestRate <= 0) {
+                document.getElementById("emiResult").textContent = "--";
+                document.getElementById("totalRepayment").textContent = "--";
+                alert("Invalid: Enter the required values.");
+                return;
+            }
+
             // Calculate monthly interest rate
             const monthlyInterestRate = annualInterestRate / 12 / 100;
 
@@ -137,6 +167,10 @@
             const emi = (loanAmount * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfMonths))) / (Math.pow(1 + monthlyInterestRate, numberOfMonths) - 1);
 
             document.getElementById("emiResult").textContent = emi.toFixed(2);
+
+            // Calculate Total Repayment
+            const totalRepayment = emi * loanTenure;
+            document.getElementById("totalRepayment").textContent = totalRepayment.toFixed(2);
 
             // Populate EMI breakdown table
             const emiTableBody = document.getElementById("emiTableBody");
