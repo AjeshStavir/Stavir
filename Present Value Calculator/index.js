@@ -3,7 +3,7 @@ function presentvalue(fv,interest,years){
    return presentvalue;
 }
 const fv=1000;
-const interest=0.05;
+const interest=5;
 const years=5;
 const result = presentvalue(fv,interest,years);
 console.log (result);
